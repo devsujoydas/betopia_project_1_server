@@ -87,6 +87,9 @@ const getProfile = (req, res) => {
   res.json(req.user); 
 };
 
+
+
+
 const updateProfile = async (req, res) => {
   try {
     const user = req.user;
@@ -94,18 +97,55 @@ const updateProfile = async (req, res) => {
     if (req.body.personalInfo) {
       user.personalInfo = { ...user.personalInfo, ...req.body.personalInfo };
     }
-    
+
     if (req.body.contactInfo) {
       user.contactInfo = { ...user.contactInfo, ...req.body.contactInfo };
     }
 
     if (req.body.financialInfo) {
       user.financialInfo = { ...user.financialInfo, ...req.body.financialInfo };
+
+      const {
+        annualIncome = 0,
+        landValue = 0,
+        mobileMoneyBalance = 0,
+        electricityBill = 0,
+      } = user.financialInfo;
+
+      const balance =
+        annualIncome + landValue + mobileMoneyBalance - electricityBill;
+
+      const calculateScore = (minBal, maxBal, minScore, maxScore, value) => {
+        if (value <= minBal) return minScore;
+        if (value >= maxBal) return maxScore;
+        return (
+          minScore +
+          ((value - minBal) / (maxBal - minBal)) * (maxScore - minScore)
+        );
+      };
+
+      let creditScore = 0;
+
+      if (balance >= 0 && balance <= 39999) {
+        creditScore = calculateScore(0, 39999, 0, 39, balance);
+      } else if (balance >= 40000 && balance <= 59999) {
+        creditScore = calculateScore(40000, 59999, 40, 59, balance);
+      } else if (balance >= 60000 && balance <= 99999) {
+        creditScore = calculateScore(60000, 99999, 60, 79, balance);
+      } else if (balance >= 100000) {
+        creditScore = 100; 
+      }
+
+      user.financialInfo.creditScore = Math.round(creditScore);
     }
 
-    const { firstName, lastName } = user.personalInfo;
-    if (firstName || lastName) {
+    const { firstName, lastName, dateOfBirth, gender } = user.personalInfo;
+    const { email, phone } = user.contactInfo;
+
+    if (firstName && lastName && dateOfBirth && gender && email && phone) {
       user.profileCompleted = true;
+    } else {
+      user.profileCompleted = false;
     }
 
     await user.save();
@@ -115,6 +155,8 @@ const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+
 
 
 const changePassword = async (req, res) => {

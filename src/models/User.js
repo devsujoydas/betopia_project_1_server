@@ -5,12 +5,13 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true },
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true, minlength: 6 },
+    role: { type: String, enum: ["user", "lender"], default: "user" },
 
     personalInfo: {
       firstName: { type: String, trim: true, default: "" },
       lastName: { type: String, trim: true, default: "" },
       dateOfBirth: { type: Date, default: null },
-      gender: { type: String, enum: ["Male", "Female", "Other", ""], default: "" },
+      gender: { type: String, enum: ["male", "female", "other", ""], default: "" },
     },
 
     contactInfo: {
