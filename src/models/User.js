@@ -33,7 +33,8 @@ const userSchema = new mongoose.Schema(
       loanStatus: { type: String, enum: ["Pending", "Approved", "Rejected"], default: "Pending", },
     },
 
-
+    resetPasswordOTP: { type: String },
+    resetPasswordExpires: { type: Date },
     profileCompleted: { type: Boolean, default: false },
   },
   { timestamps: true }
