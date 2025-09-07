@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
     personalInfo: {
       firstName: { type: String, trim: true, default: "" },
       lastName: { type: String, trim: true, default: "" },
-      dateOfBirth: { type: Date, default: null },
+      dateOfBirth: { type: String, default: "" },
       gender: { type: String, enum: ["male", "female", "other", ""], default: "" },
     },
 
