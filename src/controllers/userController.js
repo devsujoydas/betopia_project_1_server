@@ -9,22 +9,14 @@ const updateProfile = async (req, res) => {
   try {
     const user = req.user;
 
-    if (req.body.personalInfo) {
-      user.personalInfo = { ...user.personalInfo, ...req.body.personalInfo };
-    }
-    if (req.body.contactInfo) {
-      user.contactInfo = { ...user.contactInfo, ...req.body.contactInfo };
-    }
+    if (req.body.personalInfo) user.personalInfo = { ...user.personalInfo, ...req.body.personalInfo };
+    if (req.body.contactInfo) user.contactInfo = { ...user.contactInfo, ...req.body.contactInfo };
     if (req.body.financialInfo) {
       user.financialInfo = { ...user.financialInfo, ...req.body.financialInfo };
       user.financialInfo.creditScore = calculateCreditScore(user.financialInfo);
     }
 
-    user.profileCompleted = validateProfile(
-      user.personalInfo,
-      user.contactInfo,
-      user.financialInfo
-    );
+    user.profileCompleted = validateProfile(user.personalInfo,user.contactInfo,user.financialInfo);
 
     await user.save();
     res.json(user);
@@ -48,3 +40,4 @@ const deleteAccount = async (req, res) => {
 
 
 module.exports = { deleteAccount, getProfile, updateProfile };
+ 

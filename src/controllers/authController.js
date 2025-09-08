@@ -91,14 +91,12 @@ const changePassword = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 const validateOTP = (user, otp) => {
   if (!user || !user.resetPasswordOTP) return "OTP not found";
   if (user.resetPasswordExpires < Date.now()) return "OTP expired";
   if (user.resetPasswordOTP !== otp) return "Invalid OTP";
   return null;
 };
-
 const requestPasswordReset = async (req, res) => {
   try {
     const { email } = req.body;
@@ -134,7 +132,6 @@ const requestPasswordReset = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -148,7 +145,6 @@ const verifyOTP = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 const resetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword, confirmPassword } = req.body;
@@ -170,6 +166,7 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 module.exports = {
   registerUser, loginUser, logoutUser, changePassword,
