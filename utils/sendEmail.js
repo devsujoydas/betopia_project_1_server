@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 
 async function sendEmail(to, subject, html) {
   await transporter.sendMail({
-    from: `"Betopia Support" <${process.env.EMAIL_USER}>`,
+    from: `"Betopia Project 1 Support" <${process.env.EMAIL_USER}>`,
     to,
     subject,
     html,

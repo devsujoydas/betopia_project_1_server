@@ -4,8 +4,12 @@ const userSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true, lowercase: true },
     phone: { type: String, required: true, unique: true },
-    password: { type: String, required: true, minlength: 6 },
+    password: { type: String, required: true, minlength: 6, select: false },
     role: { type: String, enum: ["user", "lender"], default: "user" },
+    profileCompleted: { type: Boolean, default: false },
+    
+    resetPasswordOTP: { type: String },
+    resetPasswordExpires: { type: Date },
 
     personalInfo: {
       firstName: { type: String, trim: true, default: "" },
@@ -33,9 +37,8 @@ const userSchema = new mongoose.Schema(
       loanStatus: { type: String, enum: ["Pending", "Approved", "Rejected"], default: "Pending", },
     },
 
-    resetPasswordOTP: { type: String },
-    resetPasswordExpires: { type: Date },
-    profileCompleted: { type: Boolean, default: false },
+
+
   },
   { timestamps: true }
 );

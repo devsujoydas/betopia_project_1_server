@@ -1,0 +1,12 @@
+http://localhost:3000/api/auth/register
+http://localhost:3000/api/auth/login
+http://localhost:3000/api/auth/logout
+http://localhost:3000/api/users/delete
+http://localhost:3000/api/users/profile
+http://localhost:3000/api/users/updateProfile
+
+
+http://localhost:3000/api/auth/change-password
+http://localhost:3000/api/auth/reset-password
+http://localhost:3000/api/auth/verify-otp
+http://localhost:3000/api/auth/request-reset
