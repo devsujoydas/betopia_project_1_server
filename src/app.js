@@ -3,7 +3,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
+const userRoutes = require("./routes/userRoutes"); 
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
 
@@ -13,8 +14,8 @@ app.use(cookieParser());
 
 
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-
+app.use("/api/users", userRoutes); 
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Betopia Project 1");

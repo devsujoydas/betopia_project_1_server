@@ -3,6 +3,7 @@ const validateProfile = require("../../utils/validateProfile");
 
 const getProfile = (req, res) => {
   res.json(req.user);
+  console.log("hit")
 };
 
 const updateProfile = async (req, res) => {
@@ -16,7 +17,7 @@ const updateProfile = async (req, res) => {
       user.financialInfo.creditScore = calculateCreditScore(user.financialInfo);
     }
 
-    user.profileCompleted = validateProfile(user.personalInfo,user.contactInfo,user.financialInfo);
+    user.profileCompleted = validateProfile(user.personalInfo, user.contactInfo, user.financialInfo);
 
     await user.save();
     res.json(user);
@@ -25,7 +26,6 @@ const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 const deleteAccount = async (req, res) => {
   try {
@@ -38,6 +38,29 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+const applyLoan = async (req, res) => {
+  try {
+    const { amountRequested } = req.body;
 
-module.exports = { deleteAccount, getProfile, updateProfile };
- 
+
+    if (!amountRequested || amountRequested <= 0) {
+      return res.status(400).json({ message: "Loan amount is required and must be positive" });
+    }
+
+    const user = req.user;
+    user.financialInfo.amountRequested = amountRequested;
+    user.financialInfo.loanStatus = "Pending";
+    await user.save();
+
+    res.json({
+      message: "Loan application submitted successfully",
+      loanStatus: user.financialInfo.loanStatus,
+      amountRequested: user.financialInfo.amountRequested,
+    });
+  } catch (err) {
+    console.error("Apply Loan Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+module.exports = { deleteAccount, getProfile, updateProfile, applyLoan };

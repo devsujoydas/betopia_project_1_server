@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const sendEmail = require("../../utils/sendEmail");
 
+
 const setTokenCookie = (res, userId) => {
   const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "30d",
@@ -11,12 +12,12 @@ const setTokenCookie = (res, userId) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
-
   return token;
 };
+
 const registerUser = async (req, res) => {
   try {
     const { email, phone, password } = req.body;
@@ -34,7 +35,9 @@ const registerUser = async (req, res) => {
     setTokenCookie(res, user._id);
 
     res.status(201).json({
-      _id: user._id, email: user.email, phone: user.phone,
+      id: user._id,
+      email: user.email,
+      phone: user.phone,
       profileCompleted: user.profileCompleted,
     });
   } catch (err) {
@@ -42,6 +45,7 @@ const registerUser = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -55,7 +59,7 @@ const loginUser = async (req, res) => {
     setTokenCookie(res, user._id);
 
     res.json({
-      _id: user._id,
+      id: user._id,
       email: user.email,
       phone: user.phone,
       profileCompleted: user.profileCompleted,
@@ -65,11 +69,11 @@ const loginUser = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 const logoutUser = (req, res) => {
   res.clearCookie("token");
-  res.json({ message: "Logged out successfully" });
+  res.json({ message: "logged out successfully" });
 };
-
 
 const changePassword = async (req, res) => {
   try {
@@ -91,12 +95,7 @@ const changePassword = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-const validateOTP = (user, otp) => {
-  if (!user || !user.resetPasswordOTP) return "OTP not found";
-  if (user.resetPasswordExpires < Date.now()) return "OTP expired";
-  if (user.resetPasswordOTP !== otp) return "Invalid OTP";
-  return null;
-};
+
 const requestPasswordReset = async (req, res) => {
   try {
     const { email } = req.body;
@@ -104,7 +103,9 @@ const requestPasswordReset = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    user.resetPasswordOTP = otp;
+
+    const hashedOTP = await bcrypt.hash(otp, 10);
+    user.resetPasswordOTP = hashedOTP;
     user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
@@ -132,12 +133,17 @@ const requestPasswordReset = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
     const user = await User.findOne({ email });
-    const error = validateOTP(user, otp);
-    if (error) return res.status(400).json({ message: error });
+    if (!user || !user.resetPasswordOTP) return res.status(400).json({ message: "OTP not found" });
+
+    if (user.resetPasswordExpires < Date.now()) return res.status(400).json({ message: "OTP expired" });
+
+    const isMatch = await bcrypt.compare(otp, user.resetPasswordOTP);
+    if (!isMatch) return res.status(400).json({ message: "Invalid OTP" });
 
     res.json({ message: "OTP verified" });
   } catch (err) {
@@ -145,19 +151,24 @@ const verifyOTP = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 const resetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword, confirmPassword } = req.body;
-    if (newPassword !== confirmPassword)
-      return res.status(400).json({ message: "Passwords do not match" });
+    if (newPassword !== confirmPassword) return res.status(400).json({ message: "Passwords do not match" });
 
     const user = await User.findOne({ email });
-    const error = validateOTP(user, otp);
-    if (error) return res.status(400).json({ message: error });
+    if (!user || !user.resetPasswordOTP) return res.status(400).json({ message: "OTP not found" });
+
+    if (user.resetPasswordExpires < Date.now()) return res.status(400).json({ message: "OTP expired" });
+
+    const isMatch = await bcrypt.compare(otp, user.resetPasswordOTP);
+    if (!isMatch) return res.status(400).json({ message: "Invalid OTP" });
 
     user.password = await bcrypt.hash(newPassword, 10);
     user.resetPasswordOTP = undefined;
     user.resetPasswordExpires = undefined;
+
     await user.save();
 
     res.json({ message: "Password reset successful" });
@@ -170,5 +181,5 @@ const resetPassword = async (req, res) => {
 
 module.exports = {
   registerUser, loginUser, logoutUser, changePassword,
-  requestPasswordReset, verifyOTP, resetPassword
+  requestPasswordReset, verifyOTP, resetPassword,
 };
