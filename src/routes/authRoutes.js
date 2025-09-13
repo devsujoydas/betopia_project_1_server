@@ -9,6 +9,7 @@ router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 
 router.put("/change-password", protect, changePassword);
+
 router.post("/request-reset", requestPasswordReset);
 router.post("/verify-otp", verifyOTP);
 router.post("/reset-password", resetPassword);

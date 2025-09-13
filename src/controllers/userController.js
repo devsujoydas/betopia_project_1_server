@@ -9,7 +9,7 @@ const getProfile = (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const user = req.user;
-
+  
     if (req.body.personalInfo) user.personalInfo = { ...user.personalInfo, ...req.body.personalInfo };
     if (req.body.contactInfo) user.contactInfo = { ...user.contactInfo, ...req.body.contactInfo };
     if (req.body.financialInfo) {

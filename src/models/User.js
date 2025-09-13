@@ -7,9 +7,13 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true, minlength: 6, select: false },
     role: { type: String, enum: ["user", "lender"], default: "user" },
     profileCompleted: { type: Boolean, default: false },
-    
-    resetPasswordOTP: { type: String },
-    resetPasswordExpires: { type: Date },
+ 
+    passwordReset: {
+      otp: { type: String },
+      otpExpires: { type: Date },
+      token: { type: String },
+      tokenExpires: { type: Date },
+    },
 
     personalInfo: {
       firstName: { type: String, trim: true, default: "" },
@@ -32,13 +36,23 @@ const userSchema = new mongoose.Schema(
       electricityBill: { type: Number, default: 0 },
       mobileMoneyBalance: { type: Number, default: 0 },
       dataSharingConsent: { type: Boolean, default: false },
-      existingLoans: { type: Boolean, default: false },
-      amountRequested: { type: Number, default: 0 },
-      loanStatus: { type: String, enum: ["Pending", "Approved", "Rejected"], default: "Pending", },
     },
 
-
-
+    loanInfo: {
+      existingLoans: { type: Boolean, default: false },
+      amountRequested: { type: Number, default: 0 },
+      loanStatus: { type: String, enum: ["Pending", "Approved", "Rejected"], default: "Pending" },
+ 
+      approvedDetails: {
+        loanAmount: { type: Number, default: 0 },
+        interestRate: { type: Number, default: 0 }, 
+        terms: { type: Number, default: 0 }, 
+        note: { type: String, default: "" }, 
+      },
+      rejectionDetails: {
+        note: { type: String, default: "" },
+      },
+    },
   },
   { timestamps: true }
 );
