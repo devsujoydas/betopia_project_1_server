@@ -6,7 +6,7 @@ const { changePassword, requestPasswordReset, verifyOTP, resetPassword, register
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.post("/logout", logoutUser);
+router.post("/signout", logoutUser);
 
 router.put("/change-password", protect, changePassword);
 

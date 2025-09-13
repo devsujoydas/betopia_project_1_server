@@ -2,8 +2,7 @@ const calculateCreditScore = require("../../utils/calculateCreditScore");
 const validateProfile = require("../../utils/validateProfile");
 
 const getProfile = (req, res) => {
-  res.json(req.user);
-  console.log("hit")
+  res.json(req.user); 
 };
 
 const updateProfile = async (req, res) => {

@@ -14,7 +14,7 @@ const setTokenCookie = (res, userId) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxAge: 30 * 24 * 60 * 60 * 1000, 
   });
 
   return token;
@@ -101,7 +101,6 @@ const changePassword = async (req, res) => {
   }
 };
 
-// 1️⃣ Request Password Reset (send OTP)
 const requestPasswordReset = async (req, res) => {
   try {
     const { email } = req.body;
@@ -115,11 +114,10 @@ const requestPasswordReset = async (req, res) => {
 
     user.passwordReset = {
       otp: hashedOTP,
-      otpExpires: Date.now() + 10 * 60 * 1000, // 10 minutes
+      otpExpires: Date.now() + 10 * 60 * 1000,
     };
     await user.save();
 
-    // Send OTP via email
     await sendEmail(
       email,
       "Password Reset OTP",
@@ -133,7 +131,6 @@ const requestPasswordReset = async (req, res) => {
   }
 };
 
-// 2️⃣ Verify OTP
 const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -171,9 +168,8 @@ const resetPassword = async (req, res) => {
     const isMatch = await bcrypt.compare(otp, user.passwordReset.otp);
     if (!isMatch) return res.status(400).json({ message: "Invalid OTP" });
 
-    // Update password
     user.password = await bcrypt.hash(newPassword, 10);
-    user.passwordReset = {}; // clear OTP after success
+    user.passwordReset = {};
     await user.save();
 
     res.json({ message: "Password reset successful" });
