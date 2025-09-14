@@ -1,5 +1,5 @@
 function calculateCreditScore({ annualIncome = 0, landValue = 0, mobileMoneyBalance = 0, electricityBill = 0 }) {
-  const balance = Number(annualIncome) + Number(landValue) + Number(mobileMoneyBalance) - Number(electricityBill);
+  const balance = Number(annualIncome) + Number(landValue) - Number(mobileMoneyBalance) - Number(electricityBill);
 
   const calc = (minBal, maxBal, minScore, maxScore, value) => {
     if (value <= minBal) return minScore;

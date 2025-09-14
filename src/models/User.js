@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true, minlength: 6, select: false },
     role: { type: String, enum: ["user", "lender"], default: "user" },
     profileCompleted: { type: Boolean, default: false },
- 
+
     passwordReset: {
       otp: { type: String },
       otpExpires: { type: Date },
@@ -41,13 +41,12 @@ const userSchema = new mongoose.Schema(
     loanInfo: {
       existingLoans: { type: Boolean, default: false },
       amountRequested: { type: Number, default: 0 },
-      loanStatus: { type: String, enum: ["Pending", "Approved", "Rejected"], default: "Pending" },
- 
+      loanStatus: { type: String, enum: ["none", "pending", "approved", "rejected"], default: "none" },
       approvedDetails: {
         loanAmount: { type: Number, default: 0 },
-        interestRate: { type: Number, default: 0 }, 
-        terms: { type: Number, default: 0 }, 
-        note: { type: String, default: "" }, 
+        interestRate: { type: Number, default: 0 },
+        terms: { type: Number, default: 0 },
+        note: { type: String, default: "" },
       },
       rejectionDetails: {
         note: { type: String, default: "" },
