@@ -16,11 +16,12 @@ const userSchema = new mongoose.Schema(
     },
 
     personalInfo: {
+      profilePhotoUrl: { type: String, default: "" },
       firstName: { type: String, trim: true, default: "" },
       lastName: { type: String, trim: true, default: "" },
       dateOfBirth: { type: String, default: "" },
       gender: { type: String, enum: ["male", "female", "other", ""], default: "" },
-    }, 
+    },
 
     contactInfo: {
       address: { type: String, default: "" },
@@ -47,7 +48,7 @@ const userSchema = new mongoose.Schema(
         interestRate: { type: Number, default: 0 },
         terms: { type: Number, default: 0 },
         note: { type: String, default: "" },
-      }, 
+      },
       rejectionDetails: {
         note: { type: String, default: "" },
       },
