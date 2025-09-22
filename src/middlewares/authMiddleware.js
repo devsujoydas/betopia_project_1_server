@@ -21,4 +21,14 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = protect;
+// admin protect middleware
+const adminProtect = async (req, res, next) => {
+  await protect(req, res, async () => {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied, not admin" });
+    }
+    next();
+  });
+};
+
+module.exports = { protect, adminProtect };
