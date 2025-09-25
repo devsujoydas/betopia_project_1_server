@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true },
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true, minlength: 6, select: false },
-    role: { type: String, enum: ["user", "lender"], default: "user" },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
     profileCompleted: { type: Boolean, default: false },
 
     passwordReset: {
@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema(
       electricityBill: { type: Number, default: 0 },
       mobileMoneyBalance: { type: Number, default: 0 },
       dataSharingConsent: { type: Boolean, default: false },
+      debtToIncomeRatio: { type: Number, default: 0 },
     },
 
     loanInfo: {

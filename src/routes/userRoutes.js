@@ -7,7 +7,7 @@ const { getProfile, updateProfile, deleteAccount, applyLoan, updateProfilePictur
 router.get("/profile", protect, getProfile);
 router.put("/update-profilePicture", protect, updateProfilePicture);
 router.put("/update-profile", protect, updateProfile);
-router.delete("/delete", protect, deleteAccount);
+router.delete("/account-delete", protect, deleteAccount);
 router.post("/loans/apply", protect, applyLoan);
 
 module.exports = router;

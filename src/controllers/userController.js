@@ -12,7 +12,7 @@ const updateProfilePicture = async (req, res) => {
   try {
     const user = req.user;
     const { profilePhotoUrl } = req.body;
- 
+
     if (!profilePhotoUrl) {
       return res.status(400).json({ message: "Profile photo URL is required" });
     }
@@ -33,7 +33,7 @@ const updateProfilePicture = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const user = req.user;
+    const user = req.user; 
 
     if (req.body.personalInfo) user.personalInfo = { ...user.personalInfo, ...req.body.personalInfo };
     if (req.body.contactInfo) user.contactInfo = { ...user.contactInfo, ...req.body.contactInfo };
@@ -66,7 +66,7 @@ const deleteAccount = async (req, res) => {
 const applyLoan = async (req, res) => {
   try {
     const { amountRequested } = req.body;
- 
+
     if (!amountRequested || amountRequested <= 0) {
       return res
         .status(400)
@@ -74,22 +74,34 @@ const applyLoan = async (req, res) => {
     }
 
     const user = req.user;
- 
+
+    // Monthly income ধরে নাও (annualIncome ÷ 12)
+    const monthlyIncome = user.financialInfo.annualIncome / 12;
+
+    // Simple assumption: 1 year loan, interest ignored
+    const monthlyDebt = amountRequested / 12;
+
+    // Debt-to-Income Ratio (0–100%)
+    const debtToIncomeRatio = Math.min(Math.max(monthlyDebt / monthlyIncome, 0), 1);
+
+    // Save loan info
     user.loanInfo.amountRequested = amountRequested;
-    user.loanInfo.loanStatus = "pending"; // enum: ["none", "pending", "approved", "rejected"]
+    user.loanInfo.loanStatus = "pending";
+
+    // Save DTI as percentage with 2 decimals
+    user.financialInfo.debtToIncomeRatio = parseFloat(
+      (debtToIncomeRatio * 100).toFixed(2)
+    );
 
     await user.save();
 
-    res.json({
-      message: "Loan application submitted successfully",
-      loanStatus: user.loanInfo.loanStatus,
-      amountRequested: user.loanInfo.amountRequested,
-    });
+    res.json(user );
   } catch (err) {
     console.error("Apply Loan Error:", err);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 
 module.exports = { deleteAccount, getProfile, updateProfilePicture, updateProfile, applyLoan };

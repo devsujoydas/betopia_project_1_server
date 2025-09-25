@@ -24,12 +24,7 @@ const registerUser = async (req, res) => {
 
     setTokenCookie(res, user._id);
 
-    res.status(201).json({
-      id: user._id,
-      email: user.email,
-      phone: user.phone,
-      profileCompleted: user.profileCompleted,
-    });
+    res.status(201).json(user);
   } catch (err) {
     console.error("Register Error:", err);
     res.status(500).json({ message: "Server Error" });

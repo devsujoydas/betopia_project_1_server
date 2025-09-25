@@ -7,8 +7,7 @@ const userRoutes = require("./routes/userRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
-
-// app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+ 
 app.use(cors({ origin: ["http://localhost:5173","http://localhost:5174"], credentials: true }));
 app.use(express.json());
 app.use(cookieParser());

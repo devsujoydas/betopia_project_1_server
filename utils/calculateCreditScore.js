@@ -7,12 +7,14 @@ function calculateCreditScore({ annualIncome = 0, landValue = 0, mobileMoneyBala
     return minScore + ((value - minBal) / (maxBal - minBal)) * (maxScore - minScore);
   };
 
-  if (balance >= 0 && balance <= 39999) return Math.round(calc(0, 39999, 0, 39, balance));
-  if (balance >= 40000 && balance <= 59999) return Math.round(calc(40000, 59999, 40, 59, balance));
-  if (balance >= 60000 && balance <= 99999) return Math.round(calc(60000, 99999, 60, 79, balance));
-  if (balance >= 100000) return 100;
+  let score = 0;
 
-  return 0;
+  if (balance >= 0 && balance <= 39999) score = calc(0, 39999, 0, 39, balance);
+  else if (balance >= 40000 && balance <= 59999) score = calc(40000, 59999, 40, 59, balance);
+  else if (balance >= 60000 && balance <= 99999) score = calc(60000, 99999, 60, 79, balance);
+  else if (balance >= 100000) score = 100;
+
+  return Math.round(score); 
 }
 
 module.exports = calculateCreditScore;
