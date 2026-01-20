@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const User = require("../models/User");
 const sendEmail = require("../../utils/sendEmail");
 const { setTokenCookie } = require("../../utils/setTokenCookie");
- 
+
 
 
 const registerUser = async (req, res) => {
@@ -22,8 +22,8 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ email, phone, password: hashedPassword });
 
-    setTokenCookie(res, user._id);
-
+    const token = setTokenCookie(res, user._id);
+    // console.log(token)
     res.status(201).json(user);
   } catch (err) {
     console.error("Register Error:", err);
@@ -40,7 +40,8 @@ const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    setTokenCookie(res, user._id);
+    const token = setTokenCookie(res, user._id);
+    // console.log(token)
 
     res.json(user);
   } catch (err) {

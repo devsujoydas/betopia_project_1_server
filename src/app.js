@@ -1,25 +1,15 @@
 const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
+const router = express.Router()
 
 const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes"); 
+const userRoutes = require("./routes/userRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
-
-const app = express();
  
-app.use(cors({ origin: ["http://localhost:5173","http://localhost:5174"], credentials: true }));
-app.use(express.json());
-app.use(cookieParser());
+
+router.use("/api/auth", authRoutes);
+router.use("/api/users", userRoutes);
+router.use("/api/dashboard", dashboardRoutes);
 
 
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes); 
-app.use("/api/dashboard", dashboardRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Welcome to Betopia Project 1");
-});
-
-module.exports = app;
-  
+module.exports = router;
