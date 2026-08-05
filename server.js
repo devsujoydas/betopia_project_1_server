@@ -13,24 +13,14 @@ connectDB();
 
 const cors = require("cors");
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://guiheandco.vercel.app/",
-];
-
 app.use(
   cors({
-    origin(origin, callback) {
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: [
+      "http://localhost:5173", 
+      "https://guiheandco.vercel.app",
+    ],
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
