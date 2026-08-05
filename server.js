@@ -19,7 +19,6 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://guiheandco.netlify.app",
       "https://guiheandco.vercel.app",
     ],
     credentials: true,
