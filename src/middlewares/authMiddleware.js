@@ -7,7 +7,7 @@ const protect = async (req, res, next) => {
     if (!token) return res.status(401).json({ message: "Unauthorized" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id).select("-password");
+    req.user = await User.findById(decoded.id);
 
     if (!req.user) {
       res.clearCookie("token");
@@ -21,7 +21,6 @@ const protect = async (req, res, next) => {
   }
 };
 
-// admin protect middleware
 const adminProtect = async (req, res, next) => {
   await protect(req, res, async () => {
     if (req.user.role !== "admin") {

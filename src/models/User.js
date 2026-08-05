@@ -2,21 +2,23 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    email: { type: String, required: true, unique: true, lowercase: true },
-    phone: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    phone: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true, minlength: 6, select: false },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     profileCompleted: { type: Boolean, default: false },
+    profileSubmittedAt: { type: Date },
 
     passwordReset: {
       otp: { type: String },
       otpExpires: { type: Date },
-      token: { type: String },
-      tokenExpires: { type: Date },
     },
 
     personalInfo: {
-      profilePhotoUrl: { type: String, default: "" },
+      profileImage: {
+        url: { type: String, default: "" },
+        publicId: { type: String, default: "" },
+      },
       firstName: { type: String, trim: true, default: "" },
       lastName: { type: String, trim: true, default: "" },
       dateOfBirth: { type: String, default: "" },
@@ -32,6 +34,7 @@ const userSchema = new mongoose.Schema(
 
     financialInfo: {
       creditScore: { type: Number, default: 0 },
+      creditScoreUpdatedAt: { type: Date },
       annualIncome: { type: Number, default: 0 },
       landValue: { type: Number, default: 0 },
       electricityBill: { type: Number, default: 0 },
@@ -43,7 +46,12 @@ const userSchema = new mongoose.Schema(
     loanInfo: {
       existingLoans: { type: Boolean, default: false },
       amountRequested: { type: Number, default: 0 },
-      loanStatus: { type: String, enum: ["none", "pending", "approved", "rejected"], default: "none" },
+      appliedAt: { type: Date }, 
+      loanStatus: {
+        type: String,
+        enum: ["none", "pending", "approved", "rejected"],
+        default: "none",
+      },
       approvedDetails: {
         loanAmount: { type: Number, default: 0 },
         interestRate: { type: Number, default: 0 },
@@ -57,5 +65,14 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.passwordReset;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 module.exports = mongoose.model("User", userSchema);
