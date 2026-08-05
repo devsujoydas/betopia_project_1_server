@@ -11,32 +11,30 @@ const port = process.env.PORT || 3000;
 
 connectDB();
 
-app.use(express.json());
-app.use(cookieParser());
+const cors = require("cors");
 
 const allowedOrigins = [
   "http://localhost:5173",
   "https://guiheandco.vercel.app",
 ];
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Content-Type, Authorization, Content-Length, X-Requested-With"
-    );
-    res.header("Access-Control-Allow-Credentials", "true");
-  }
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
-  next();
-});
+app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Welcome to guiheandco");
