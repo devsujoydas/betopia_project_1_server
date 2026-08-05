@@ -1,13 +1,21 @@
 const AppError = require("../utils/AppError");
 const calculateCreditScore = require("../utils/calculateCreditScore");
 const validateProfile = require("../utils/validateProfile");
-const { uploadImageToCloudinary, deleteImageFromCloudinary } = require("./uploadService");
+const {
+  uploadImageToCloudinary,
+  deleteImageFromCloudinary,
+} = require("./uploadService");
 
 const PROFILE_IMAGE_FOLDER = "guiheandco/profiles";
 
-const updateProfile = async (user, { personalInfo, contactInfo, financialInfo, loanInfo }) => {
-  if (personalInfo) user.personalInfo = { ...user.personalInfo.toObject(), ...personalInfo };
-  if (contactInfo) user.contactInfo = { ...user.contactInfo.toObject(), ...contactInfo };
+const updateProfile = async (
+  user,
+  { personalInfo, contactInfo, financialInfo, loanInfo },
+) => {
+  if (personalInfo)
+    user.personalInfo = { ...user.personalInfo.toObject(), ...personalInfo };
+  if (contactInfo)
+    user.contactInfo = { ...user.contactInfo.toObject(), ...contactInfo };
 
   if (financialInfo) {
     user.financialInfo = { ...user.financialInfo.toObject(), ...financialInfo };
@@ -20,7 +28,11 @@ const updateProfile = async (user, { personalInfo, contactInfo, financialInfo, l
   }
 
   const wasCompleted = user.profileCompleted;
-  user.profileCompleted = validateProfile(user.personalInfo, user.contactInfo, user.financialInfo);
+  user.profileCompleted = validateProfile(
+    user.personalInfo,
+    user.contactInfo,
+    user.financialInfo,
+  );
 
   if (!wasCompleted && user.profileCompleted) {
     user.profileSubmittedAt = new Date();
@@ -35,7 +47,10 @@ const updateProfilePicture = async (user, file) => {
 
   const previousPublicId = user.personalInfo.profileImage?.publicId;
 
-  const { url, publicId } = await uploadImageToCloudinary(file.buffer, PROFILE_IMAGE_FOLDER);
+  const { url, publicId } = await uploadImageToCloudinary(
+    file.buffer,
+    PROFILE_IMAGE_FOLDER,
+  );
   user.personalInfo.profileImage = { url, publicId };
   await user.save();
 
@@ -47,9 +62,9 @@ const updateProfilePicture = async (user, file) => {
 const deleteAccount = async (user) => {
   const publicId = user.personalInfo.profileImage?.publicId;
 
-  await user.deleteOne();
-
   if (publicId) await deleteImageFromCloudinary(publicId);
+  
+  await user.deleteOne();
 };
 
 const applyLoan = async (user, amountRequested) => {
@@ -65,12 +80,16 @@ const applyLoan = async (user, amountRequested) => {
   const monthlyDebt = amountRequested / 12;
 
   const debtToIncomeRatio =
-    monthlyIncome > 0 ? Math.min(Math.max(monthlyDebt / monthlyIncome, 0), 1) : 1;
+    monthlyIncome > 0
+      ? Math.min(Math.max(monthlyDebt / monthlyIncome, 0), 1)
+      : 1;
 
   user.loanInfo.amountRequested = amountRequested;
   user.loanInfo.loanStatus = "pending";
   user.loanInfo.appliedAt = new Date();
-  user.financialInfo.debtToIncomeRatio = parseFloat((debtToIncomeRatio * 100).toFixed(2));
+  user.financialInfo.debtToIncomeRatio = parseFloat(
+    (debtToIncomeRatio * 100).toFixed(2),
+  );
 
   await user.save();
   return user;
