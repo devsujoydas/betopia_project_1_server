@@ -15,7 +15,7 @@ const cors = require("cors");
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://guiheandco.vercel.app",
+  "https://guiheandco.vercel.app/",
 ];
 
 app.use(
