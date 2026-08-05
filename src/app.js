@@ -5,8 +5,8 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 
-router.use("/api/auth", authRoutes);
-router.use("/api/users", userRoutes);
-router.use("/api/dashboard", dashboardRoutes);
+router.use("/auth", authRoutes);
+router.use("/users", userRoutes);
+router.use("/dashboard", dashboardRoutes);
 
 module.exports = router;

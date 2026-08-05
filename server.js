@@ -15,27 +15,25 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173", 
-      "https://guiheandco.vercel.app",
-    ],
+    origin: ["http://localhost:5173", "https://guiheandco.vercel.app"],
     credentials: true,
   }),
 );
 
 app.use(express.json());
 app.use(cookieParser());
-
 app.get("/", (req, res) => {
   res.send("Welcome to guiheandco");
 });
 
-app.use("/", appRoutes);
+app.use("/api", appRoutes);
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`Server running on ${port}`);
+  });
+}
 
 module.exports = app;
